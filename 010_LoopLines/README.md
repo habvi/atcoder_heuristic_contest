@@ -1,6 +1,6 @@
 # ALGO ARTIS プログラミングコンテスト2022<br>(AtCoder Heuristic Contest 010)
 
-2022.4/24
+2022.4/24  
 [AHC010](https://atcoder.jp/contests/ahc010/tasks/ahc010_a)  
 今回はrandomだけであとはtimeを使う練習などをしていました。  
 当たり前ですがrandomだと全然輪が大きくなりませんでした。
