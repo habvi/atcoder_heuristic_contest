@@ -84,7 +84,7 @@ def random_move(times):
     for t in range(times):
         t2 = time.perf_counter()
         dt = t2 - t1
-        if dt >= 1.9:
+        if dt >= 1.5:
             break
 
         move = []
