@@ -98,6 +98,6 @@ def random_move(times):
 
 tiles = [tuple(map(int, list(input()))) for _ in range(N)]
 
-times = 10000
+times = 100
 max_move, max_score = random_move(times)
 print(max_move)
