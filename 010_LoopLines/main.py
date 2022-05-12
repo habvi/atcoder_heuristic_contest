@@ -1,4 +1,7 @@
 from random import randrange
+import time
+
+t1 = time.perf_counter()
 
 N = 30
 
@@ -78,7 +81,12 @@ def get_random_int():
 def random_move(times):
     max_score = 0
     max_move = ['0'] * (N * N)
-    for _ in range(times):
+    for t in range(times):
+        t2 = time.perf_counter()
+        dt = t2 - t1
+        if dt >= 1.9:
+            break
+
         move = []
         tiles_after = [[None] * N for _ in range(N)]
         for i in range(N):
@@ -98,6 +106,6 @@ def random_move(times):
 
 tiles = [tuple(map(int, list(input()))) for _ in range(N)]
 
-times = 500
+times = 10000
 max_move, max_score = random_move(times)
 print(max_move)
