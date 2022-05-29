@@ -14,6 +14,16 @@ fn input_vec<T: FromStr>() -> Vec<T> {
         .collect()
 }
 
+fn eprint_tiles(tiles: &mut Vec<Vec<usize>>) -> () {
+    for tile in tiles.iter() {
+        for t in tile.iter() {
+            eprint!("{} ", t);
+        }
+        eprintln!();
+    }
+    eprintln!("----")
+}
+
 fn move_test(ans: &mut Vec<&str>) -> () {
     ans.push("U");
     ans.push("D");
@@ -28,14 +38,18 @@ fn main() {
     #[allow(unused_variables)]
     let t: usize = nt[1];
 
-    // input
     let mut tiles: Vec<Vec<usize>> = Vec::new();
     let mut gy: usize = 0;
     let mut gx: usize = 0;
+
+    const TYPES: usize = 16;
+    let mut tile_num: Vec<usize> = vec![0; TYPES];
+
     for y in 0..n {
         let input: String = input_t();
         let mut v: Vec<usize> = Vec::new();
         for (x, a) in input.chars().enumerate() {
+            // to 0 ~ 15
             let num: usize;
             if '0' <= a && a <= '9' {
                 num = a as usize - 48;
@@ -46,14 +60,15 @@ fn main() {
             } else {
                 num = a as usize - 87;
             }
-            assert_eq!(true, num <= 15);
             v.push(num);
+            tile_num[num] += 1;
         }
-        eprintln!("{:?}", v);
         tiles.push(v);
     }
     assert_eq!(0, tiles[gy][gx]);
+    eprint_tiles(&mut tiles);
     eprintln!("start (y, x) : {}, {}", gy, gx);
+    eprintln!("tile num : {:?}", tile_num);
 
     let mut ans: Vec<&str> = Vec::new();
 
@@ -61,6 +76,7 @@ fn main() {
     move_test(&mut ans);
 
     // output
-    eprintln!("{}", ans.iter().map(|c| c.trim()).collect::<Vec<_>>().join(""));
-    println!();
+    let output: String = ans.iter().map(|c| c.trim()).collect::<Vec<_>>().join("");
+    eprintln!("{}", output);
+    println!("{}", output)
 }
