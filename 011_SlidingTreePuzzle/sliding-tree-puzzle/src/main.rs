@@ -15,18 +15,12 @@ fn input_vec<T: FromStr>() -> Vec<T> {
         .collect()
 }
 
-fn eprint_tiles(tiles: &mut Vec<Vec<usize>>) -> () {
-    for tile in tiles.iter() {
-        for t in tile.iter() {
-            eprint!("{} ", t);
-        }
-        eprintln!();
-    }
-    eprintln!("----")
-}
-
 struct Info {
-    ans: Vec<String>,
+    #[allow(dead_code)]
+    n: usize,
+    t: usize,
+    route: Vec<String>,
+    cand_ans: Vec<(usize, String)>,
     tiles: Vec<Vec<usize>>,
     tile_num: Vec<usize>,
     gy: usize,
@@ -35,20 +29,50 @@ struct Info {
 
 impl fmt::Display for Info {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "gy, gx : ({}, {})\ntiles : {:?}\n-----",
-        self.gx, self.gy, self.tiles)
+        writeln!(f, "gy, gx : ({}, {})", self.gx, self.gy)?;
+        for tile in self.tiles.iter() {
+            for t in tile.iter() {
+                write!(f, "{} ", t)?;
+            }
+            writeln!(f)?;
+        }
+        writeln!(f, "{:?}", self.cand_ans)?;
+        write!(f, "----")?;
+        Ok(())
     }
+}
+
+#[allow(unused_variables)]
+fn calc_score(g: &mut Info) -> usize {
+    100000
+}
+
+fn add_cand_ans(g: &mut Info) -> () {
+    while g.route.len() > g.t {
+        g.route.pop();
+    }
+    let output: String = g.route.iter().map(|c| c.trim()).collect::<Vec<_>>().join("");
+
+    let score: usize = calc_score(g);
+    g.cand_ans.push((score, output));
 }
 
 fn move_1(g: &mut Info) -> () {
     // example
-    g.ans.push("UUUU".to_string());
+    g.route.push("U".to_string());
+    g.route.push("D".to_string());
     let tmp1: usize = g.tiles[0][0];
     let tmp2: usize = g.tiles[1][0];
     g.tiles[1][0] = tmp1;
     g.tiles[0][0] = tmp2;
     g.tile_num[0] += 0;
     g.gx += 1;
+    g.cand_ans.push((600, "UUDD".to_string()));
+    g.cand_ans.push((800, "UUUUUUUUU".to_string()));
+    g.cand_ans.push((100, "RRRLLLL".to_string()));
+
+    // each turn
+    add_cand_ans(g);
 }
 
 fn main() {
@@ -85,13 +109,14 @@ fn main() {
         tiles.push(v);
     }
     assert_eq!(0, tiles[gy][gx]);
-    eprint_tiles(&mut tiles);
     eprintln!("tile num : {:?}", tile_num);
     eprintln!("-----");
 
-    let ans: Vec<String> = Vec::new();
     let mut g: Info = Info {
-        ans: ans,
+        n: n,
+        t: t,
+        route: Vec::new(),
+        cand_ans: Vec::new(),
         tiles: tiles,
         tile_num: tile_num,
         gy: gy,
@@ -105,10 +130,9 @@ fn main() {
     eprintln!("{}", g);
 
     // output
-    while g.ans.len() > t {
-        g.ans.pop();
-    }
-    let output: String = g.ans.iter().map(|c| c.trim()).collect::<Vec<_>>().join("");
-    eprintln!("{}", output);
-    println!("{}", output)
+    g.cand_ans.sort_by_key(|x| std::cmp::Reverse(x.0));
+    eprintln!("{}", g);
+    eprintln!("{}", g.cand_ans[0].1);
+
+    println!("{}", g.cand_ans[0].1);
 }
