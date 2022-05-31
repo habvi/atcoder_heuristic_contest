@@ -18,12 +18,12 @@ fn input_vec<T: FromStr>() -> Vec<T> {
 }
 
 struct Info {
-    #[allow(dead_code)]
     n: usize,
     t: usize,
     route: Vec<String>,
     cand_ans: Vec<(usize, String)>,
     tiles: Vec<Vec<usize>>,
+    #[allow(dead_code)]
     tile_num: Vec<usize>,
     gy: usize,
     gx: usize,
@@ -161,6 +161,7 @@ fn swap_tiles(g: &mut Info, dir: &str) -> () {
 }
 
 fn add_route_to_cand_ans(g: &mut Info) -> () {
+    // just in case
     while g.route.len() > g.t {
         g.route.pop();
     }
@@ -246,7 +247,11 @@ fn main() {
     // output
     g.cand_ans.sort_by_key(|x| Reverse(x.0));
     eprintln!("{}", g);
-    eprintln!("{}", g.cand_ans[0].1);
-
-    println!("{}", g.cand_ans[0].1);
+    match g.cand_ans.get(0) {
+        Some((_, ans)) => {
+            eprintln!("{}", ans);
+            println!("{}", ans);
+        },
+        None => println!(),
+    }
 }
