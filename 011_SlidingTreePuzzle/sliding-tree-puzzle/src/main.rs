@@ -96,6 +96,15 @@ impl UnionFind {
     }
 }
 
+fn to_1dem(g: &mut Info, y: usize, x: usize) -> usize {
+    y * g.n + x
+}
+
+#[allow(dead_code)]
+fn to_2dem(g: &mut Info, z: usize) -> (usize, usize) {
+    (z / g.n, z % g.n)
+}
+
 fn calc_score(g: &mut Info) -> (usize, usize) {
     let mut uf: UnionFind = UnionFind::new(g.n * g.n);
     let dxy: Vec<(usize, usize)> = vec![(0, 1), (1, 0)];
@@ -107,8 +116,8 @@ fn calc_score(g: &mut Info) -> (usize, usize) {
                 if !(ny < g.n && nx < g.n) {
                     continue;
                 }
-                let now: usize = y * g.n + x;
-                let nxt: usize = ny * g.n + nx;
+                let now: usize = to_1dem(g, y, x);
+                let nxt: usize = to_1dem(g, ny, nx);
                 // unite: right, under
                 if *dy == 0 {
                     if g.tiles[y][x] >> 2 & 1 == 1 && g.tiles[ny][nx] & 1 == 1 {
@@ -202,7 +211,20 @@ fn move_to_dir(g: &mut Info, dir: &str) -> bool {
     true
 }
 
-fn move_random(g: &mut Info) -> () {
+// struct Coordinate { y: usize, x: usize }
+
+// bring the target tile:(ty, tx) to (y, x)
+#[allow(dead_code)]
+#[allow(unused_variables)]
+fn bring(g: &mut Info, y: usize, x: usize, ty: usize, tx: usize) -> () {
+
+}
+
+fn ceil(a: usize, b: usize) -> usize {
+    (a + b - 1) / b
+}
+
+fn move_pattern(g: &mut Info) -> () {
     // example
     // move_to_dir(g, "R");
     // move_to_dir(g, "D");
@@ -213,6 +235,97 @@ fn move_random(g: &mut Info) -> () {
     // move_to_dir(g, "L");
     // move_to_dir(g, "D");
 
+    // make priority for each places
+    let mut cand_tile: Vec<Vec<usize>> = vec![Vec::new(); g.n * g.n];
+    // (0, 0)
+    for &i in [12, 13, 14, 15].iter() {
+        cand_tile[0].push(i);
+    }
+    // (0, 1 ~ n-1)
+    for x in 1..g.n - 1 {
+        let z: usize = to_1dem(g, 0, x);
+        if x % 2 == 0 {
+            cand_tile[z].push(12);
+            cand_tile[z].push(8);
+        } else {
+            cand_tile[z].push(9);
+            cand_tile[z].push(1);
+        }
+    }
+    // (1, 0)
+    for &i in [10, 11, 14, 15, 2].iter() {
+        let z: usize = to_1dem(g, 1, 0);
+        cand_tile[z].push(i);
+    }
+    // (1, 1 ~ n-1)
+    for x in 1..g.n - 1 {
+        let z: usize = to_1dem(g, 1, x);
+        if x % 2 == 0 {
+            cand_tile[z].push(3);
+            cand_tile[z].push(1);
+        } else {
+            cand_tile[z].push(6);
+            cand_tile[z].push(2);
+        }
+    }
+
+    let sum57: usize = g.tile_num[5] + g.tile_num[7];
+    let row: usize = ceil(sum57, g.n - 2);
+    let horizontal: usize = row;
+    let vertical: usize = g.n - 3 - row;
+    eprintln!("horizontal: {}, vertical: {}", horizontal, vertical);
+    // horizontal
+    // (2 ~ 2+horizontal, 0)
+    for y in 2..2 + horizontal {
+        for &i in [14, 15].iter() {
+            let z: usize = to_1dem(g, y, 0);
+            cand_tile[z].push(i);
+        }
+    }
+    // (2 ~ 2+horizontal, 1 ~ n-1)
+    for y in 2..2 + horizontal {
+        for x in 1..g.n - 1 {
+            let z: usize = to_1dem(g, y, x);
+            for &i in [5, 7, 1].iter() {
+                cand_tile[z].push(i);
+            }
+        }
+    }
+
+    // vertical
+    let start: usize = 2 + horizontal;
+    // (start, 0)
+    for &i in [14, 15, 2].iter() {
+        let z: usize = to_1dem(g, start, 0);
+        cand_tile[z].push(i);
+    }
+    // (start, 1 ~ n-1)
+    for x in 1..g.n - 1 {
+        let z: usize = to_1dem(g, start, x);
+        for &i in [13, 5, 7, 1].iter() {
+            cand_tile[z].push(i);
+        }
+    }
+    // (start+1 ~ n-1, 0)
+    for y in start + 1..g.n - 1 {
+        let z: usize = to_1dem(g, y, 0);
+        for &i in [11, 10, 15, 3, 2].iter() {
+            cand_tile[z].push(i);
+        }
+    }
+    // (start+1 ~ n-1, 1 ~ n-1)
+    for y in start + 1..g.n - 1 {
+        for x in 1..g.n - 1 {
+            let z: usize = to_1dem(g, y, x);
+            for &i in [10, 11, 15, 2].iter() {
+                cand_tile[z].push(i);
+            }
+        }
+    }
+    eprintln!("{:?}", cand_tile);
+}
+
+fn move_random(g: &mut Info) -> () {
     while g.route.len() < g.t {
         let rdm = rand::thread_rng().gen_range(0, 4);
         move_to_dir(g, DIR[rdm]);
@@ -268,6 +381,7 @@ fn main() {
     // eprintln!("{}", g);
 
     // move
+    move_pattern(&mut g);
     move_random(&mut g);
 
     // output
