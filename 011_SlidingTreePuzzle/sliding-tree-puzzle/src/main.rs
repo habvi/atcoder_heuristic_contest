@@ -1,10 +1,11 @@
-// random move test
 use std::io::stdin;
-use std::mem::swap;
 use std::str::FromStr;
 use std::fmt;
+use std::mem::swap;
 use std::cmp::{max, Reverse};
 use rand::Rng;
+
+const DIR: &[&str] = &["U", "D", "L", "R"];
 
 fn input_t<T: FromStr>() -> T {
     let mut s: String = String::new();
@@ -143,6 +144,22 @@ fn calc_score(g: &mut Info) -> (usize, usize) {
     (max_score, max_group_size)
 }
 
+fn check_range(g: &mut Info, dir: &str) -> bool {
+    let mut ny: i32 = g.gy as i32;
+    let mut nx: i32 = g.gx as i32;
+    match dir {
+        "U" => ny -= 1,
+        "D" => ny += 1,
+        "L" => nx -= 1,
+        "R" => nx += 1,
+        _ => unreachable!()
+    }
+    if 0 <= ny && ny < g.n as i32 && 0 <= nx && nx < g.n as i32 {
+        return true;
+    }
+    false
+}
+
 fn add_dir_to_route(g: &mut Info, dir: &str) -> () {
     g.route.push(dir.to_string());
 }
@@ -157,7 +174,6 @@ fn swap_tiles(g: &mut Info, dir: &str) -> () {
         "R" => g.gx += 1,
         _ => unreachable!()
     }
-    assert!(g.gy < g.n && g.gx < g.n, "gy, gx is out of fields");
     let tmp1: usize = g.tiles[py][px];
     let tmp2: usize = g.tiles[g.gy][g.gx];
     g.tiles[py][px] = tmp2;
@@ -175,30 +191,31 @@ fn add_route_to_cand_ans(g: &mut Info) -> () {
     g.cand_ans.push((score, group_size, output));
 }
 
-fn move_to_dir(g: &mut Info, dir: &str) -> () {
+fn move_to_dir(g: &mut Info, dir: &str) -> bool {
+    if !check_range(g, dir) {
+        return false;
+    }
+    assert!(g.gy < g.n && g.gx < g.n, "gy, gx is out of fields");
     add_dir_to_route(g, dir);
     swap_tiles(g, dir);
     add_route_to_cand_ans(g);
+    true
 }
 
-fn move_1(g: &mut Info) -> () {
-    // random t turn
-    let dir: Vec<&str> = vec!["U", "D", "L", "R"];
+fn move_random(g: &mut Info) -> () {
+    // example
+    // move_to_dir(g, "R");
+    // move_to_dir(g, "D");
+    // move_to_dir(g, "R");
+    // move_to_dir(g, "D");
+    // move_to_dir(g, "R");
+    // move_to_dir(g, "D");
+    // move_to_dir(g, "L");
+    // move_to_dir(g, "D");
+
     while g.route.len() < g.t {
         let rdm = rand::thread_rng().gen_range(0, 4);
-
-        let mut ny: i32 = g.gy as i32;
-        let mut nx: i32 = g.gx as i32;
-        match dir[rdm] {
-            "U" => ny -= 1,
-            "D" => ny += 1,
-            "L" => nx -= 1,
-            "R" => nx += 1,
-            _ => unreachable!()
-        }
-        if 0 <= ny && ny < g.n as i32 && 0 <= nx && nx < g.n as i32 {
-            move_to_dir(g, dir[rdm]);
-        }
+        move_to_dir(g, DIR[rdm]);
     }
 }
 
@@ -248,18 +265,21 @@ fn main() {
         gy: gy,
         gx: gx,
     };
-    eprintln!("{}", g);
+    // eprintln!("{}", g);
 
     // move
-    move_1(&mut g);
+    move_random(&mut g);
 
     // output
     g.cand_ans.sort_by_key(|x| Reverse(x.0));
+    // eprintln!("{}", g);
     match g.cand_ans.get(0) {
         Some((score, group_size, ans)) => {
             eprintln!("{} {} {} {}", score, group_size, g.route.len(), g.n);
+            // eprintln!("{}", ans);
             println!("{}", ans);
         },
         None => println!(),
     }
+    // eprintln!("{}", g.cand_ans.len());
 }
