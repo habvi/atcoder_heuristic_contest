@@ -216,8 +216,8 @@ fn move_to_dir(g: &mut Info, dir: &str) -> bool {
 // bring the target tile:(ty, tx) to (y, x)
 #[allow(dead_code)]
 #[allow(unused_variables)]
-fn bring(g: &mut Info, y: usize, x: usize, ty: usize, tx: usize) -> () {
-
+fn bring(g: &mut Info, now: usize, target: usize) -> () {
+    
 }
 
 fn ceil(a: usize, b: usize) -> usize {
@@ -323,6 +323,40 @@ fn move_pattern(g: &mut Info) -> () {
         }
     }
     eprintln!("{:?}", cand_tile);
+
+    fn find_target(g: &mut Info, y: usize, x: usize, target: usize) -> Option<(usize, usize)> {
+        for ny in y..g.n {
+            for nx in x..g.n {
+                if g.tiles[ny][nx] == target {
+                    return Some((ny, nx));
+                }
+            }
+        }
+        None
+    }
+    // if find a cand, bring
+    let mut uf: UnionFind = UnionFind::new(g.n * g.n);
+    for y in 0.. g.n - 1 {
+        for x in 0.. g.n - 1 {
+            let now: usize = to_1dem(g, y, x);
+            for target in &cand_tile[now] {
+                // find right-under
+                match find_target(g, y, x, *target) {
+                    Some((ny, nx)) => {
+                        let nxt: usize = to_1dem(g, ny, nx);
+                        if !uf.is_same(now, nxt) {
+                            uf.unite(now, nxt);
+                            bring(g, now, nxt);
+                            break;
+                        } else {
+                            continue;
+                        }
+                    },
+                    _ => {},
+                }
+            }
+        }
+    }
 }
 
 fn move_random(g: &mut Info) -> () {
