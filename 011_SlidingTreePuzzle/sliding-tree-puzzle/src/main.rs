@@ -1,3 +1,4 @@
+// a lot of bugs..
 use std::io::stdin;
 use std::str::FromStr;
 use std::fmt;
@@ -100,7 +101,6 @@ fn to_1dem(g: &mut Info, y: usize, x: usize) -> usize {
     y * g.n + x
 }
 
-#[allow(dead_code)]
 fn to_2dem(g: &mut Info, z: usize) -> (usize, usize) {
     (z / g.n, z % g.n)
 }
@@ -211,13 +211,164 @@ fn move_to_dir(g: &mut Info, dir: &str) -> bool {
     true
 }
 
+fn come_back(g: &mut Info, y: usize, x: usize) -> () {
+    if g.gx < x {
+        while g.gx < x {
+            move_to_dir(g, "R");
+        }
+    } else if g.gx > x {
+        while g.gx > x {
+            move_to_dir(g, "L");
+        }
+    }
+    if g.gy < y {
+        while g.gy < y {
+            move_to_dir(g, "D");
+        }
+    } else if g.gy > y {
+        while g.gy > y {
+            move_to_dir(g, "U");
+        }
+    }
+}
+
 // struct Coordinate { y: usize, x: usize }
 
-// bring the target tile:(ty, tx) to (y, x)
-#[allow(dead_code)]
-#[allow(unused_variables)]
+// bring the target tile:(ty, tx) to now:(y, x)
 fn bring(g: &mut Info, now: usize, target: usize) -> () {
-    
+    let (y, x): (usize, usize) = to_2dem(g, now);
+    let (mut ty, mut tx): (usize, usize) = to_2dem(g, target);
+
+    fn check_target(g: &mut Info, dir: &str, ty: &mut usize, tx: &mut usize) -> () {
+        let mut ny: i32 = g.gy as i32;
+        let mut nx: i32 = g.gx as i32;
+        match dir {
+            "U" => ny -= 1,
+            "D" => ny += 1,
+            "L" => nx -= 1,
+            "R" => nx += 1,
+            _ => unreachable!()
+        }
+        if (ny, nx) == (*ty as i32, *tx as i32) {
+            match dir {
+                "U" => *ty += 1,
+                "D" => *ty -= 1,
+                "L" => *tx += 1,
+                "R" => *tx -= 1,
+                _ => unreachable!()
+            }
+        }
+    }
+
+    fn check_and_move(g: &mut Info, dir: &str, ty: &mut usize, tx: &mut usize) -> () {
+        check_target(g, dir, ty, tx);
+        move_to_dir(g, dir);
+    }
+
+    // irregular
+    if target == g.n * g.n - 1 {
+        // up left
+        while g.gx < g.n {
+            check_and_move(g, "R", &mut ty, &mut tx);
+            if g.gx == g.n - 1 {
+                break;
+            }
+        }
+        while g.gy < g.n {
+            check_and_move(g, "D", &mut ty, &mut tx);
+            if g.gy == g.n - 1 {
+                break;
+            }
+        }
+        for s in &["L", "U", "R"] {
+            check_and_move(g, s, &mut ty, &mut tx);
+        }
+        if (ty, tx) == (y, x) {
+            return;
+        }
+        for s in &["U", "L", "L"] {
+            check_and_move(g, s, &mut ty, &mut tx);
+        }
+        // back
+        come_back(g, y, x);
+    }
+    if ty == g.n - 1 {
+        while g.gx < tx {
+            check_and_move(g, "R", &mut ty, &mut tx);
+        }
+        while g.gy < g.n - 1 {
+            check_and_move(g, "D", &mut ty, &mut tx);
+        }
+        for s in &["R", "U", "U", "L"] {
+            check_and_move(g, s, &mut ty, &mut tx);
+        }
+        come_back(g, y, x);
+    }
+    if tx == g.n - 1 {
+        while g.gy < ty {
+            check_and_move(g, "D", &mut ty, &mut tx);
+        }
+        while g.gx < g.n - 1 {
+            check_and_move(g, "R", &mut ty, &mut tx);
+        }
+        for s in &["D", "L", "L", "U"] {
+            check_and_move(g, s, &mut ty, &mut tx);
+        }
+        come_back(g, y, x);
+    }
+
+    // move above
+    if g.gy != ty {
+        while g.gx < tx {
+            check_and_move(g, "R", &mut ty, &mut tx);
+        }
+        while g.gy + 1 < ty {
+            check_and_move(g, "D", &mut ty, &mut tx);
+        }
+    } else {
+        while g.gx + 1 < tx {
+            check_and_move(g, "R", &mut ty, &mut tx);
+        }
+    }
+    if (ty, tx) == (y, x) {
+        return;
+    }
+
+    // down -> up
+    if (g.gy + 1, g.gx) == (ty, tx) {
+        while ty > y {
+            check_and_move(g, "D", &mut ty, &mut tx);
+            if (ty, tx) == (y, x) {
+                return;
+            }
+            if ty == y {
+                break;
+            }
+            for s in &["R", "U", "U", "L"] {
+                check_and_move(g, s, &mut ty, &mut tx);
+            }
+        }
+        if (ty, tx) == (y, x) {
+            return;
+        }
+        for s in &["L", "U"] {
+            check_and_move(g, s, &mut ty, &mut tx);
+        }
+    }
+
+    // right -> left
+    while tx > x {
+        check_and_move(g, "R", &mut ty, &mut tx);
+        if (ty, tx) == (y, x) {
+            return;
+        }
+        if tx == x {
+            break;
+        }
+        for s in &["D", "L", "L", "U"] {
+            check_and_move(g, s, &mut ty, &mut tx);
+        }
+    }
 }
 
 fn ceil(a: usize, b: usize) -> usize {
@@ -225,16 +376,6 @@ fn ceil(a: usize, b: usize) -> usize {
 }
 
 fn move_pattern(g: &mut Info) -> () {
-    // example
-    // move_to_dir(g, "R");
-    // move_to_dir(g, "D");
-    // move_to_dir(g, "R");
-    // move_to_dir(g, "D");
-    // move_to_dir(g, "R");
-    // move_to_dir(g, "D");
-    // move_to_dir(g, "L");
-    // move_to_dir(g, "D");
-
     // make priority for each places
     let mut cand_tile: Vec<Vec<usize>> = vec![Vec::new(); g.n * g.n];
     // (0, 0)
@@ -324,6 +465,14 @@ fn move_pattern(g: &mut Info) -> () {
     }
     eprintln!("{:?}", cand_tile);
 
+    // move(0, 0)
+    while g.gx > 0 {
+        move_to_dir(g, "L");
+    }
+    while g.gy > 0 {
+        move_to_dir(g, "U");
+    }
+
     fn find_target(g: &mut Info, y: usize, x: usize, target: usize) -> Option<(usize, usize)> {
         for ny in y..g.n {
             for nx in x..g.n {
@@ -338,6 +487,9 @@ fn move_pattern(g: &mut Info) -> () {
     let mut uf: UnionFind = UnionFind::new(g.n * g.n);
     for y in 0.. g.n - 1 {
         for x in 0.. g.n - 1 {
+            // if not in (y, x), come back
+            come_back(g, y, x);
+
             let now: usize = to_1dem(g, y, x);
             for target in &cand_tile[now] {
                 // find right-under
@@ -424,10 +576,9 @@ fn main() {
     match g.cand_ans.get(0) {
         Some((score, group_size, ans)) => {
             eprintln!("{} {} {} {}", score, group_size, g.route.len(), g.n);
-            // eprintln!("{}", ans);
             println!("{}", ans);
         },
         None => println!(),
     }
-    // eprintln!("{}", g.cand_ans.len());
+    eprintln!("{:?}", g.tiles);
 }
