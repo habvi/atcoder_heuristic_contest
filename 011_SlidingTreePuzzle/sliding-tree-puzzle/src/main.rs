@@ -1,4 +1,3 @@
-// a lot of bugs..
 use std::io::stdin;
 use std::str::FromStr;
 use std::fmt;
@@ -27,10 +26,10 @@ struct Info {
     route: Vec<String>,
     cand_ans: Vec<(usize, usize, String)>,
     tiles: Vec<Vec<usize>>,
-    #[allow(dead_code)]
     tile_num: Vec<usize>,
     gy: usize,
     gx: usize,
+    done: Vec<Vec<bool>>,
 }
 
 impl fmt::Display for Info {
@@ -212,20 +211,30 @@ fn move_to_dir(g: &mut Info, dir: &str) -> bool {
 }
 
 fn come_back(g: &mut Info, y: usize, x: usize) -> () {
-    if g.gx < x {
-        while g.gx < x {
-            move_to_dir(g, "R");
-        }
-    } else if g.gx > x {
-        while g.gx > x {
-            move_to_dir(g, "L");
-        }
-    }
     if g.gy < y {
         while g.gy < y {
             move_to_dir(g, "D");
         }
-    } else if g.gy > y {
+    } else if g.gy >= 1 && !g.done[g.gy - 1][g.gx] && g.gy > y {
+        while g.gy > y {
+            move_to_dir(g, "U");
+        }
+    }
+    if g.gx < x {
+        while g.gx < x {
+            move_to_dir(g, "R");
+        }
+    } else if g.gx >= 1 && !g.done[g.gy][g.gx - 1] && g.gx > x {
+        while g.gx > x {
+            move_to_dir(g, "L");
+        }
+    }
+
+    if g.gy < y {
+        while g.gy < y {
+            move_to_dir(g, "D");
+        }
+    } else if g.gy >= 1 && !g.done[g.gy - 1][g.gx] && g.gy > y {
         while g.gy > y {
             move_to_dir(g, "U");
         }
@@ -301,6 +310,9 @@ fn bring(g: &mut Info, now: usize, target: usize) -> () {
         }
         for s in &["R", "U", "U", "L"] {
             check_and_move(g, s, &mut ty, &mut tx);
+        }
+        if g.gx != 0 {
+            check_and_move(g, "L", &mut ty, &mut tx);
         }
         come_back(g, y, x);
     }
@@ -507,6 +519,7 @@ fn move_pattern(g: &mut Info) -> () {
                     _ => {},
                 }
             }
+            g.done[y][x] = true;
         }
     }
 }
@@ -563,8 +576,8 @@ fn main() {
         tile_num: tile_num,
         gy: gy,
         gx: gx,
+        done: vec![vec![false; n]; n],
     };
-    // eprintln!("{}", g);
 
     // move
     move_pattern(&mut g);
@@ -572,7 +585,6 @@ fn main() {
 
     // output
     g.cand_ans.sort_by_key(|x| Reverse(x.0));
-    // eprintln!("{}", g);
     match g.cand_ans.get(0) {
         Some((score, group_size, ans)) => {
             eprintln!("{} {} {} {}", score, group_size, g.route.len(), g.n);
