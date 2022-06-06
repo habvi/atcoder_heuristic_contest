@@ -486,16 +486,16 @@ fn move_pattern(g: &mut Info) -> () {
         move_to_dir(g, "U");
     }
 
-    // fn find_target(g: &mut Info, y: usize, x: usize, target: usize) -> Option<(usize, usize)> {
-    //     for ny in y..g.n {
-    //         for nx in x..g.n {
-    //             if g.tiles[ny][nx] == target {
-    //                 return Some((ny, nx));
-    //             }
-    //         }
-    //     }
-    //     None
-    // }
+    fn find_target(g: &mut Info, y: usize, x: usize, target: usize) -> Option<(usize, usize)> {
+        for ny in y..g.n {
+            for nx in x..g.n {
+                if g.tiles[ny][nx] == target {
+                    return Some((ny, nx));
+                }
+            }
+        }
+        None
+    }
 
     // if find a cand, bring
     let mut uf: UnionFind = UnionFind::new(g.n * g.n);
@@ -505,43 +505,61 @@ fn move_pattern(g: &mut Info) -> () {
             come_back(g, y, x);
 
             let now: usize = to_1dem(g, y, x);
-            let mut under4: Vec<(usize, usize, usize)> = Vec::new();
-            let mut over4: Vec<(usize, usize, usize)> = Vec::new();
             for target in &cand_tile[now] {
-                for ny in y..g.n {
-                    for nx in x..g.n {
-                        if g.tiles[ny][nx] == *target {
-                            let dist: usize = ny - y + nx - x;
-                            if target <= &4 {
-                                under4.push((dist, ny, nx));
-                            } else {
-                                over4.push((dist, ny, nx));
-                            }
+                // find right-under
+                match find_target(g, y, x, *target) {
+                    Some((ny, nx)) => {
+                        let nxt: usize = to_1dem(g, ny, nx);
+                        if !uf.is_same(now, nxt) {
+                            uf.unite(now, nxt);
+                            bring(g, now, nxt);
+                            break;
+                        } else {
+                            continue;
                         }
-                    }
-                }
-            }
-            over4.sort();
-            let mut found: bool = false;
-            for i in 0..over4.len() {
-                let (ny, nx) = (over4[i].1, over4[i].2);
-                let nxt: usize = to_1dem(g, ny, nx);
-                if !uf.is_same(now, nxt) {
-                    uf.unite(now, nxt);
-                    bring(g, now, nxt);
-                    found = true;
-                    break;
-                }
-            }
-            if !found && under4.len() == 1 {
-                let (ny, nx) = (under4[0].1, under4[0].2);
-                let nxt: usize = to_1dem(g, ny, nx);
-                if !uf.is_same(now, nxt) {
-                    uf.unite(now, nxt);
-                    bring(g, now, nxt);
+                    },
+                    _ => {},
                 }
             }
             g.done[y][x] = true;
+
+            // let mut under4: Vec<(usize, usize, usize)> = Vec::new();
+            // let mut over4: Vec<(usize, usize, usize)> = Vec::new();
+            // for target in &cand_tile[now] {
+            //     for ny in y..g.n {
+            //         for nx in x..g.n {
+            //             if g.tiles[ny][nx] == *target {
+            //                 let dist: usize = ny - y + nx - x;
+            //                 if target <= &4 {
+            //                     under4.push((dist, ny, nx));
+            //                 } else {
+            //                     over4.push((dist, ny, nx));
+            //                 }
+            //             }
+            //         }
+            //     }
+            // }
+            // over4.sort();
+            // let mut found: bool = false;
+            // for i in 0..over4.len() {
+            //     let (ny, nx) = (over4[i].1, over4[i].2);
+            //     let nxt: usize = to_1dem(g, ny, nx);
+            //     if !uf.is_same(now, nxt) {
+            //         uf.unite(now, nxt);
+            //         bring(g, now, nxt);
+            //         found = true;
+            //         break;
+            //     }
+            // }
+            // if !found && under4.len() == 1 {
+            //     let (ny, nx) = (under4[0].1, under4[0].2);
+            //     let nxt: usize = to_1dem(g, ny, nx);
+            //     if !uf.is_same(now, nxt) {
+            //         uf.unite(now, nxt);
+            //         bring(g, now, nxt);
+            //     }
+            // }
+            // g.done[y][x] = true;
         }
     }
 }
