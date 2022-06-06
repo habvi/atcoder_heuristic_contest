@@ -34,4 +34,5 @@ Rating : 1051 ->  ()
 
 ### ビジュアライザ(seed=4)
 ![demo](sliding-tree-puzzle/vis.png)
+GIF
 ![demo](sliding-tree-puzzle/vis.gif)
