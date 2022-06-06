@@ -28,11 +28,9 @@ Rating : 1051 ->  ()
 | [5.rs](sliding-tree-puzzle/src/bin/5.rs) | 7,781,948 | 42ms | 4.rsに最短距離の目的tileを採用を追加したがどこかがおかしい。 |
 | [4.rs](sliding-tree-puzzle/src/bin/4.rs) | 9,737,079 | 44ms | 修正する時間がなく4.rsを最終提出として終了 |
 
-
-
 <br>
 
-### ビジュアライザ(seed=4)
+### ビジュアライザのPNG(seed=4)
 ![demo](sliding-tree-puzzle/vis.png)
-GIF  
+### GIF  
 ![demo](sliding-tree-puzzle/vis.gif)
