@@ -24,9 +24,9 @@ Rating : 1051 ->  ()
 | [1.rs](sliding-tree-puzzle/src/bin/1.rs) | 2,869,199 | 4ms | tターン何もしない |
 | [2.rs](sliding-tree-puzzle/src/bin/2.rs) | 4,656,724 | 38ms | tターンrandomで判定に問題ないかcheck |
 | [3.rs](sliding-tree-puzzle/src/bin/3.rs) | 8,257,596 | 38ms | プラモデル風に作ろうとするもバグが取れないまま一旦提出 |
-| [4.rs](sliding-tree-puzzle/src/bin/3.rs) | 10,254,736 | 40ms | 3.rsのバグを修正。やっと少し狙い通りに動いていそう。 |
-| [5.rs](sliding-tree-puzzle/src/bin/3.rs) | 7,781,948 | 42ms | 4.rsに最短距離の目的tileを採用を追加したがどこかがおかしい。 |
-| [6.rs](sliding-tree-puzzle/src/bin/3.rs) | 9,737,079 | 44ms | 修正する時間がなく4.rsを最終提出として終了 |
+| [4.rs](sliding-tree-puzzle/src/bin/4.rs) | 10,254,736 | 40ms | 3.rsのバグを修正。やっと少し狙い通りに動いていそう。 |
+| [5.rs](sliding-tree-puzzle/src/bin/5.rs) | 7,781,948 | 42ms | 4.rsに最短距離の目的tileを採用を追加したがどこかがおかしい。 |
+| [4.rs](sliding-tree-puzzle/src/bin/4.rs) | 9,737,079 | 44ms | 修正する時間がなく4.rsを最終提出として終了 |
 
 
 
@@ -34,5 +34,5 @@ Rating : 1051 ->  ()
 
 ### ビジュアライザ(seed=4)
 ![demo](sliding-tree-puzzle/vis.png)
-GIF
+GIF  
 ![demo](sliding-tree-puzzle/vis.gif)
