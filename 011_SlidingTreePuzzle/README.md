@@ -6,10 +6,10 @@ Public : 2022.6/5 19:00~
 
 
 ## 最終結果
-score :  (3000 testcase)  
-ranking :  /  人  
-performance :  ()  
-Rating : 1051 ->  ()
+score : 599,884,256 (3000 testcase)  
+ranking : 454 / 961 人  
+performance : 1183 (緑)  
+Rating : 1051 -> 1097 (緑)
 
 <br>
 
@@ -32,5 +32,5 @@ Rating : 1051 ->  ()
 
 ### ビジュアライザのPNG(seed=4)
 ![demo](sliding-tree-puzzle/vis.png)
-### GIF  
+GIF(少し遅れて表示)  
 ![demo](sliding-tree-puzzle/vis.gif)
