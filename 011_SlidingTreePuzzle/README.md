@@ -31,6 +31,6 @@ Rating : 1051 -> 1097 (緑)
 <br>
 
 ### ビジュアライザのPNG(seed=4)
-![demo](sliding-tree-puzzle/vis.png)
+![demo](sliding-tree-puzzle/vis.png)  
 GIF(少し遅れて表示)  
 ![demo](sliding-tree-puzzle/vis.gif)
