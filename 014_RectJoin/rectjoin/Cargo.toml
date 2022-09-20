@@ -11,3 +11,15 @@ rand = { version = "=0.7.3", features = ["small_rng"] }
 [[bin]]
 name = "main"
 path = "src/main.rs"
+
+[[bin]]
+name = "test"
+path = "src/test.rs"
+
+[[bin]]
+name = "1"
+path = "src/bin/1.rs"
+
+[[bin]]
+name = "2"
+path = "src/bin/2.rs"

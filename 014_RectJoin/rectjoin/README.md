@@ -22,7 +22,8 @@ Rating : 1097 -> ■ (■)
 | file | score | time | 何をしたか |
 | ---- | ---- | ---- | ---- |
 | [1.rs](recrjoin/src/bin/1.rs) | 14,048,321 | 6ms | 一旦何もしない |
-| [2.rs](recrjoin/src/bin/2.rs) |  | ms |  |
+| [2.rs](recrjoin/src/bin/2.rs) | 33,271,877 | 512ms | 長方形の4点目として選べるp1を全探索し重みの高い順に採用する |
+| [3.rs](recrjoin/src/bin/3.rs) |  | ms |  |
 
 
 <br>

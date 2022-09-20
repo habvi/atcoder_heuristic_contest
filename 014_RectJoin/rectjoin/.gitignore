@@ -4,3 +4,6 @@ out
 score_log.txt
 
 in.txt
+out.txt
+test.*
+vis
