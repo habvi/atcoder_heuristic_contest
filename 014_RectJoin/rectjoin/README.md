@@ -14,16 +14,16 @@ Rating : 1097 -> ■ (■)
 <br>
 
 ## Results
-[recrjoin/src/main.rs](recrjoin/src/main.rs) : 提出ファイルの差分がまとまったもの (1.rs ~ ■.rs)
+[rectjoin/src/main.rs](rectjoin/src/main.rs) : 提出ファイルの差分がまとまったもの (1.rs ~ ■.rs)
 
 ### Submitted logs
 50 testcase (Rust)
 
 | file | score | time | 何をしたか |
 | ---- | ---- | ---- | ---- |
-| [1.rs](recrjoin/src/bin/1.rs) | 14,048,321 | 6ms | 一旦何もしない |
-| [2.rs](recrjoin/src/bin/2.rs) | 33,271,877 | 512ms | 長方形の4点目として選べるp1を全探索し重みの高い順に採用する |
-| [3.rs](recrjoin/src/bin/3.rs) |  | ms |  |
+| [1.rs](rectjoin/src/bin/1.rs) | 14,048,321 | 6ms | 一旦何もしない |
+| [2.rs](rectjoin/src/bin/2.rs) | 33,271,877 | 512ms | 長方形の4点目として選べるp1を全探索し重みの高い順に採用する |
+| [3.rs](rectjoin/src/bin/3.rs) |  | ms |  |
 
 
 <br>
@@ -34,4 +34,4 @@ Rating : 1097 -> ■ (■)
 <br>
 
 ### ビジュアライザのPNG(seed=)
-![demo](recrjoin/vis.png)  
+![demo](rectjoin/vis.png)  
