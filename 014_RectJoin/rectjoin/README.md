@@ -14,17 +14,18 @@ Rating : 1097 -> ■ (■)
 <br>
 
 ## Results
-[rectjoin/src/main.rs](rectjoin/src/main.rs) : 提出ファイルの差分がまとまったもの (1.rs ~ ■.rs)
+[src/main.rs](src/main.rs) : 提出ファイルの差分がまとまったもの (1.rs ~ ■.rs)
 
 ### Submitted logs
 50 testcase (Rust)
 
 | file | score | time | 何をしたか |
 | ---- | ---- | ---- | ---- |
-| [1.rs](rectjoin/src/bin/1.rs) | 14,048,321 | 6ms | 一旦何もしない |
-| [2.rs](rectjoin/src/bin/2.rs) | 33,271,877 | 512ms | 長方形の4点目として選べるp1を全探索し重みの高い順に採用する。4.0sec試す。 |
-| [3.rs](rectjoin/src/bin/3.rs) | 33,271,877 | 497ms | 2.rsを4.9secでお試し。手元では僅かに上がるのにscore少しも変わらない謎。 |
-| [4.rs](rectjoin/src/bin/4.rs) |  | ms |  |
+| [1.rs](src/bin/1.rs) | 14,048,321 | 6ms | 一旦何もしない |
+| [2.rs](src/bin/2.rs) | 33,271,877 | 512ms | 長方形の4点目として選べるp1を全探索し重みの高い順に採用する。4.0sec試す。 |
+| [3.rs](src/bin/3.rs) | 33,271,877 | 497ms | 2.rsを4.9secでお試し。手元では僅かに上がるのにscore少しも変わらない謎。 |
+| [4.rs](src/bin/4.rs) | 33,712,711 | 4904ms | 重みが高い順にその周で作れる1番小さい四角を採用。微増…。 |
+| [5.rs](src/bin/5.rs) |  | ms |  |
 
 
 <br>
@@ -35,4 +36,4 @@ Rating : 1097 -> ■ (■)
 <br>
 
 ### ビジュアライザのPNG(seed=)
-![demo](rectjoin/vis.png)  
+![demo](vis.png)  
