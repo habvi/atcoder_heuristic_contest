@@ -1,3 +1,4 @@
+use std::collections::HashSet;
 use std::io::stdin;
 use std::str::FromStr;
 
@@ -25,6 +26,7 @@ fn get_time() -> f64 {
 }
 
 type Point = (i32, i32);
+type Output = Vec<[Point; 4]>;
 
 #[derive(Debug)]
 pub struct Input {
@@ -32,8 +34,6 @@ pub struct Input {
     m: usize,
     xy: Vec<Point>,
 }
-
-type Output = Vec<[Point; 4]>;
 
 fn weight((x, y): Point, n: usize) -> i32 {
     let dx = x - n as i32 / 2;
@@ -166,7 +166,123 @@ fn print_output(output: Output) -> () {
     }
 }
 
-fn solve(input: &Input, output: &mut Output) -> () {
+// solve2 ->->->
+type EachWeight = Vec<HashSet<Point>>;
+type Cand = Vec<(usize, [Point; 4])>;
+
+#[allow(dead_code)]
+fn print_each_w(each_w: &EachWeight, max_weight: i32) -> () {
+    for i in (0..=max_weight).rev() {
+        if each_w[i as usize].len() > 0 {
+            eprintln!("{}  {:?}", i, each_w[i as usize]);
+        }
+    }
+}
+
+fn erase_from_each_w(each_w: &mut EachWeight, w: i32, (x, y): Point) -> () {
+    each_w[w as usize].remove(&(x, y));
+}
+
+fn rect_size(rect: [Point; 4]) -> usize {
+    let mut tmp = 0;
+    tmp += (rect[0].0 - rect[1].0).abs();
+    tmp += (rect[0].1 - rect[1].1).abs();
+    tmp += (rect[0].0 - rect[3].0).abs();
+    tmp += (rect[0].1 - rect[3].1).abs();
+    tmp as usize
+}
+
+fn rect_search(input: &Input, state: &State, (x, y): Point, cand: &mut Cand) -> () {
+    for i in 0..8 {
+        let mut rect = [(-1, -1); 4];
+        // [0]
+        rect[0] = (x, y);
+
+        // [1] : right
+        let (mut rx, mut ry) = (x, y);
+        let (dx, dy) = DXY[i];
+        while 0 <= rx && rx < input.n as i32 && 0 <= ry && ry < input.n as i32 {
+            if state.has_point[rx as usize][ry as usize] == true {
+                rect[1] = (rx, ry);
+                break;
+            }
+            rx += dx;
+            ry += dy;
+        }
+        if rect[1] == (-1, -1) {
+            continue;
+        }
+
+        // [3] : left
+        let (mut lx, mut ly) = (x, y);
+        let (dx, dy) = DXY[(i + 2) % 8];
+        while 0 <= lx && lx < input.n as i32 && 0 <= ly && ly < input.n as i32 {
+            if state.has_point[lx as usize][ly as usize] == true {
+                rect[3] = (lx, ly);
+                break;
+            }
+            lx += dx;
+            ly += dy;
+        }
+        if rect[3] == (-1, -1) {
+            continue;
+        }
+
+        // [2]
+        let (dx, dy) = (rect[1].0 - rect[0].0, rect[1].1 - rect[0].1);
+        let (x2, y2) = (rect[3].0 + dx, rect[3].1 + dy);
+        if !(0 <= x2 && x2 < input.n as i32 && 0 <= y2 && y2 < input.n as i32) {
+            continue;
+        }
+        rect[2] = (x2, y2);
+
+        let err = state.check_move(rect);
+        if err.len() > 0 {
+            continue;
+        }
+        cand.push((rect_size(rect), rect));
+    }
+}
+
+fn solve2(input: &Input, output: &mut Output) -> () {
+    let mut state = State::new(input);
+    let max_weight = weight((0, 0), input.n);
+    let mut weight_all: HashSet<i32> = HashSet::new();
+    let mut each_w: EachWeight = vec![HashSet::new(); max_weight as usize + 1];
+    for x in 0..input.n {
+        for y in 0..input.n {
+            if state.has_point[x as usize][y as usize] == false {
+                let w = weight((x as i32, y as i32), input.n);
+                weight_all.insert(w);
+                each_w[w as usize].insert((x as i32, y as i32));
+            }
+        }
+    }
+    while get_time() < 4.9 {
+        for w in (0..=max_weight).rev() {
+            if each_w[w as usize].len() == 0 {
+                continue;
+            }
+            let mut cand: Cand = Vec::new();
+            for &point in &each_w[w as usize] {
+                rect_search(input, &state, point, &mut cand);
+            }
+            if cand.len() == 0 {
+                continue;
+            }
+            cand.sort();
+            let max_rect = cand[0].1;
+            erase_from_each_w(&mut each_w, w, max_rect[0]);
+            state.apply_move(max_rect);
+            output.push(max_rect);
+            break;
+        }
+    }
+}
+// ->->-> solve2
+
+#[allow(dead_code)]
+fn solve1(input: &Input, output: &mut Output) -> () {
     let mut state = State::new(input);
     while get_time() < 4.9 {
         let mut max_score = -1;
@@ -178,8 +294,10 @@ fn solve(input: &Input, output: &mut Output) -> () {
                 }
                 for k in 0..8 {
                     let mut rect = [(-1, -1); 4];
+
                     // [0]
                     rect[0] = (i as i32, j as i32);
+
                     // [1] : right
                     let (mut x, mut y) = (i as i32, j as i32);
                     let (dx, dy) = DXY[k];
@@ -194,6 +312,7 @@ fn solve(input: &Input, output: &mut Output) -> () {
                     if rect[1] == (-1, -1) {
                         continue;
                     }
+
                     // [3] : left
                     let (mut x, mut y) = (i as i32, j as i32);
                     let (dx, dy) = DXY[(k + 2) % 8];
@@ -208,13 +327,11 @@ fn solve(input: &Input, output: &mut Output) -> () {
                     if rect[3] == (-1, -1) {
                         continue;
                     }
+
                     // [2]
                     let (dx, dy) = (rect[1].0 - rect[0].0, rect[1].1 - rect[0].1);
                     let (x2, y2) = (rect[3].0 + dx, rect[3].1 + dy);
                     if !(0 <= x2 && x2 < input.n as i32 && 0 <= y2 && y2 < input.n as i32) {
-                        continue;
-                    }
-                    if state.has_point[x2 as usize][y2 as usize] == false {
                         continue;
                     }
                     rect[2] = (x2, y2);
@@ -254,15 +371,14 @@ fn main() {
 
     get_time();
     let mut output: Output = Vec::new();
-    solve(&input, &mut output);
+    // solve1(&input, &mut output);
+    solve2(&input, &mut output);
 
     #[allow(unused_variables)]
     let (score, string, state) = compute_score(&input, &output);
     if string.len() > 0 {
-        eprintln!("(main: compute score) Error!! {}\n", string);
         println!("0");
     } else {
-        eprintln!("{} {} {} {} {}", input.n, input.m, score, get_time(), output.len());
         print_output(output);
     }
 }
