@@ -22,8 +22,9 @@ Rating : 1097 -> ■ (■)
 | file | score | time | 何をしたか |
 | ---- | ---- | ---- | ---- |
 | [1.rs](rectjoin/src/bin/1.rs) | 14,048,321 | 6ms | 一旦何もしない |
-| [2.rs](rectjoin/src/bin/2.rs) | 33,271,877 | 512ms | 長方形の4点目として選べるp1を全探索し重みの高い順に採用する |
-| [3.rs](rectjoin/src/bin/3.rs) |  | ms |  |
+| [2.rs](rectjoin/src/bin/2.rs) | 33,271,877 | 512ms | 長方形の4点目として選べるp1を全探索し重みの高い順に採用する。4.0sec試す。 |
+| [3.rs](rectjoin/src/bin/3.rs) | 33,271,877 | 497ms | 2.rsを4.9secでお試し。手元では僅かに上がるのにscore少しも変わらない謎。 |
+| [4.rs](rectjoin/src/bin/4.rs) |  | ms |  |
 
 
 <br>
