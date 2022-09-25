@@ -168,7 +168,7 @@ fn print_output(output: Output) -> () {
 
 fn solve(input: &Input, output: &mut Output) -> () {
     let mut state = State::new(input);
-    while get_time() < 4.0 {
+    while get_time() < 4.9 {
         let mut max_score = -1;
         let mut max_rect = [(-1, -1); 4];
         for i in 0..input.n {
@@ -214,6 +214,9 @@ fn solve(input: &Input, output: &mut Output) -> () {
                     if !(0 <= x2 && x2 < input.n as i32 && 0 <= y2 && y2 < input.n as i32) {
                         continue;
                     }
+                    if state.has_point[x2 as usize][y2 as usize] == false {
+                        continue;
+                    }
                     rect[2] = (x2, y2);
 
                     let err = state.check_move(rect);
@@ -231,7 +234,6 @@ fn solve(input: &Input, output: &mut Output) -> () {
         if max_score == -1 {
             break;
         }
-        eprintln!("{} {:?}", max_score, max_rect);
         state.apply_move(max_rect);
         output.push(max_rect);
     }
@@ -249,12 +251,10 @@ fn main() {
         m,
         xy,
     };
-    eprintln!("{:?}\n", input);
 
     get_time();
     let mut output: Output = Vec::new();
     solve(&input, &mut output);
-    eprintln!("\nOutput : {:?}\n", output);
 
     #[allow(unused_variables)]
     let (score, string, state) = compute_score(&input, &output);
@@ -262,7 +262,7 @@ fn main() {
         eprintln!("(main: compute score) Error!! {}\n", string);
         println!("0");
     } else {
-        eprintln!("Score : {}\n", score);
+        eprintln!("{} {} {} {} {}", input.n, input.m, score, get_time(), output.len());
         print_output(output);
     }
 }
