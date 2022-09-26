@@ -14,7 +14,7 @@ echo "" > score_log.txt
 for i in $(seq 0 "$end")
 do
     num=$(printf "%04d\n" "$i")
-    cargo run --bin "$1" < ../in/"$num".txt > out/out"$num".txt 2>> score_log.txt
+    cargo run --bin "$1" < in/"$num".txt > out/out"$num".txt 2>> score_log.txt
     printf "\r[ $((i + 1)) / $(("$end" + 1)) ]"
 done
 printf "\n"
