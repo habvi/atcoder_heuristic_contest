@@ -259,8 +259,10 @@ fn solve2(input: &Input, output: &mut Output) -> () {
         }
     }
     while get_time() < 4.9 {
+        let mut now_w = 0;
         for w in (0..=max_weight).rev() {
             if each_w[w as usize].len() == 0 {
+                now_w += 1;
                 continue;
             }
             let mut cand: Cand = Vec::new();
@@ -268,6 +270,7 @@ fn solve2(input: &Input, output: &mut Output) -> () {
                 rect_search(input, &state, point, &mut cand);
             }
             if cand.len() == 0 {
+                now_w += 1;
                 continue;
             }
             cand.sort();
@@ -275,7 +278,11 @@ fn solve2(input: &Input, output: &mut Output) -> () {
             erase_from_each_w(&mut each_w, w, max_rect[0]);
             state.apply_move(max_rect);
             output.push(max_rect);
+            now_w += 1;
             break;
+        }
+        if now_w == max_weight + 1 {
+            return;
         }
     }
 }
@@ -294,7 +301,6 @@ fn solve1(input: &Input, output: &mut Output) -> () {
                 }
                 for k in 0..8 {
                     let mut rect = [(-1, -1); 4];
-
                     // [0]
                     rect[0] = (i as i32, j as i32);
 
