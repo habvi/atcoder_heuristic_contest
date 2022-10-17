@@ -1,11 +1,9 @@
 .vscode
 target
-in
-out
+in*
+out*
 score_log.txt
 
-in.txt
-out.txt
 result.txt
-test.*
+test*
 vis

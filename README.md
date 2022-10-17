@@ -8,3 +8,4 @@
 | [009](https://github.com/habvi/atcoder_heuristic_contest/tree/master/009_RobustMemory-of-CommutingRoutes) | 4h | 2 | 1220 | Python | 出来るだけ早く高確率でオフィスに到達する上下左右の移動方法 | yet |
 | [010](https://github.com/habvi/atcoder_heuristic_contest/tree/master/010_LoopLines) | 4h | 3 | 1356 | Python | 8種の線路タイルを回転して出来るだけ大きな2つの環状線を作る |
 | [011](https://github.com/habvi/atcoder_heuristic_contest/tree/master/011_SlidingTreePuzzle) | 199h | 3 | 1183 | Rust | 15種類のタイルをスライドパズルしてなるべく大きな木を短い手数で作る |
+| [014](https://github.com/habvi/atcoder_heuristic_contest/tree/master/014_RectJoin) | 340h | 3 | 1274 | Rust | 1点を置いてできる正方形をなるべく多く作る |
